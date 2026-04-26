@@ -1,11 +1,12 @@
 // 项目级 build.gradle
 buildscript {
-    ext.kotlin_version = '1.9.22'
+    ext.kotlin_version = '1.9.0'  // 降低Kotlin版本以减少依赖
     repositories {
+        google()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.1.0'
+        classpath 'com.android.tools.build:gradle:8.0.2'  // 尝试更老的稳定版本
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
