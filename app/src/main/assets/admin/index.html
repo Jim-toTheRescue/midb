@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiDB 管理后台</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🗄️ MiDB 管理后台</h1>
+            <div class="status" id="status">检查中...</div>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab active" data-tab="sqlite">SQLite</button>
+            <button class="tab" data-tab="leveldb">LevelDB</button>
+            <button class="tab" data-tab="status">状态监控</button>
+        </nav>
+
+        <div class="tab-content active" id="sqlite-tab">
+            <div class="sql-executor">
+                <h3>SQL 执行器</h3>
+                <textarea id="sqlInput" placeholder="输入SQL语句，如: SELECT * FROM users"></textarea>
+                <div class="params">
+                    <label>参数 (JSON数组):</label>
+                    <input type="text" id="sqlParams" placeholder='["param1", "param2"]'>
+                </div>
+                <div class="btn-group">
+                    <button id="btnExecute">执行</button>
+                    <button id="btnClear">清空</button>
+                    <select id="quickSQL">
+                        <option value="">常用SQL</option>
+                        <option value="SELECT name FROM sqlite_master WHERE type='table'">显示所有表</option>
+                        <option value="PRAGMA table_info(users)">查看表结构</option>
+                        <option value="SELECT * FROM users LIMIT 100">查询前100条</option>
+                    </select>
+                </div>
+            </div>
+            <div class="result" id="sqliteResult"></div>
+        </div>
+
+        <div class="tab-content" id="leveldb-tab">
+            <div class="kv-controls">
+                <h3>键值管理</h3>
+                <div class="search-box">
+                    <input type="text" id="kvSearch" placeholder="搜索键名 (支持前缀)">
+                    <button id="btnSearch">搜索</button>
+                </div>
+                <div class="add-kv">
+                    <input type="text" id="kvKey" placeholder="键名">
+                    <textarea id="kvValue" placeholder="值"></textarea>
+                    <button id="btnAddKV">添加/更新</button>
+                </div>
+            </div>
+            <div class="kv-list" id="kvList"></div>
+        </div>
+
+        <div class="tab-content" id="status-tab">
+            <h3>服务状态</h3>
+            <div id="statusContent"></div>
+        </div>
+    </div>
+    <script src="js/app.js"></script>
+</body>
+</html>

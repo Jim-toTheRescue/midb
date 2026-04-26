@@ -1,0 +1,25 @@
+// 项目级 build.gradle
+buildscript {
+    ext.kotlin_version = '1.9.22'
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.2.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://dl.bintray.com/stojan/android' }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
