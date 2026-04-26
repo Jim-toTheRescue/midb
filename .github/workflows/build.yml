@@ -40,11 +40,13 @@ jobs:
       with:
         gradle-version: '8.2'
         arguments: --no-daemon
+        cache-disabled: true
     
     - name: Build with Gradle
       run: gradle assembleDebug
       env:
         JAVA_HOME: ${{ env.JAVA_HOME_17_X64 }}
+        GRADLE_USER_HOME: ${{ runner.temp }}/gradle-home
     
     - name: Check build output
       run: |
