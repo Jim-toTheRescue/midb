@@ -1,16 +1,8 @@
-// 项目级 build.gradle
 buildscript {
     ext.kotlin_version = '1.9.0'
     repositories {
-        maven {
-            url 'https://maven.aliyun.com/repository/google'
-        }
-        maven {
-            url 'https://maven.aliyun.com/repository/central'
-        }
-        maven {
-            url 'https://maven.aliyun.com/repository/jcenter'
-        }
+        google()
+        mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.0.2'
@@ -20,9 +12,9 @@ buildscript {
 
 allprojects {
     repositories {
+        google()
         mavenCentral()
         maven { url 'https://jitpack.io' }
-        maven { url 'https://dl.bintray.com/stojan/android' }
     }
 }
 
