@@ -2,12 +2,10 @@ package com.example.midb
 
 import android.net.wifi.WifiManager
 import android.os.Bundle
-import android.text.format.Formatter
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.midb.server.MidbHttpServer
-import java.net.InetAddress
 
 class MainActivity : AppCompatActivity() {
     
@@ -22,9 +20,9 @@ class MainActivity : AppCompatActivity() {
         val tvStatus = findViewById<TextView>(R.id.tvStatus)
         val tvIpAddress = findViewById<TextView>(R.id.tvIpAddress)
         
-        // 显示IP地址
         val ip = getLocalIpAddress()
-        tvIpAddress.text = "设备IP: ${ip ?: "未知"}\n管理端: http://${ip ?: "localhost"}:8080/admin/"
+        val port = 8086
+        tvIpAddress.text = "设备IP: ${ip ?: "未知"}\n管理端: http://${ip ?: "localhost"}:$port/admin/"
         
         btnStartStop.setOnClickListener {
             if (isRunning) {
@@ -33,18 +31,18 @@ class MainActivity : AppCompatActivity() {
                 tvStatus.text = "服务已停止"
                 isRunning = false
             } else {
-                startServer()
+                startServer(port)
                 btnStartStop.text = "停止服务"
-                tvStatus.text = "服务运行中\n访问: http://${ip ?: "localhost"}:8080/admin/"
+                tvStatus.text = "服务运行中\n端口: $port"
                 isRunning = true
             }
         }
     }
     
-    private fun startServer() {
+    private fun startServer(port: Int) {
         Thread {
             try {
-                server = MidbHttpServer(8080, this)
+                server = MidbHttpServer(port, this)
                 server?.start()
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -60,7 +58,7 @@ class MainActivity : AppCompatActivity() {
     private fun getLocalIpAddress(): String? {
         try {
             val wifiManager = getSystemService(WIFI_SERVICE) as WifiManager
-            val ip = Formatter.formatIpAddress(wifiManager.connectionInfo.ipAddress)
+            val ip = android.text.format.Formatter.formatIpAddress(wifiManager.connectionInfo.ipAddress)
             return ip
         } catch (e: Exception) {
             e.printStackTrace()
