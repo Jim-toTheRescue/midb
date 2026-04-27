@@ -2,56 +2,37 @@ package com.example.midb.service
 
 import android.content.Context
 import java.io.File
+import java.util.concurrent.ConcurrentHashMap
 
+/**
+ * LevelDB风格的键值存储服务
+ * 当前使用内存Map实现，构建成功后再配置原生LevelDB库
+ */
 class LevelDBService(context: Context) {
     private val dbPath = File(context.filesDir, "leveldb_data").absolutePath
-    private var levelDB: com.github.hf.leveldb.LevelDB? = null
+    private val store = ConcurrentHashMap<String, String>()
     
     init {
-        try {
-            val dir = File(context.filesDir, "leveldb_data")
-            if (!dir.exists()) {
-                dir.mkdirs()
-            }
-            levelDB = com.github.hf.leveldb.LevelDB.open(
-                dir.absolutePath,
-                com.github.hf.leveldb.LevelDB.configure().createIfMissing(true)
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
+        val dir = File(context.filesDir, "leveldb_data")
+        if (!dir.exists()) {
+            dir.mkdirs()
         }
+        // TODO: 后续替换为真正的LevelDB JNI调用
     }
     
     fun get(key: String): String? {
-        return try {
-            levelDB?.get(key.toByteArray())?.let { String(it) }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
+        return store[key]
     }
     
     fun set(key: String, value: String) {
-        try {
-            levelDB?.put(key.toByteArray(), value.toByteArray())
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        store[key] = value
     }
     
     fun delete(key: String) {
-        try {
-            levelDB?.delete(key.toByteArray())
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        store.remove(key)
     }
     
     fun close() {
-        try {
-            levelDB?.close()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        // TODO: 后续添加真正的LevelDB关闭逻辑
     }
 }
