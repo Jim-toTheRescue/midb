@@ -8,58 +8,162 @@
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>🗄️ MiDB 管理后台</h1>
-            <div class="status" id="status">检查中...</div>
+        <header class="header">
+            <div class="header-left">
+                <span class="logo">🗄️</span>
+                <h1>MiDB 管理后台</h1>
+            </div>
+            <div class="header-right">
+                <div class="connection-status" id="statusIndicator">
+                    <span class="status-dot"></span>
+                    <span id="status">连接中...</span>
+                </div>
+            </div>
         </header>
 
-        <nav class="tabs">
-            <button class="tab active" data-tab="sqlite">SQLite</button>
-            <button class="tab" data-tab="leveldb">LevelDB</button>
-            <button class="tab" data-tab="status">状态监控</button>
-        </nav>
+        <div class="main-layout">
+            <aside class="sidebar">
+                <nav class="nav-menu">
+                    <button class="nav-item active" data-tab="console">
+                        <span class="nav-icon">📋</span>
+                        <span>控制台</span>
+                    </button>
+                    <button class="nav-item" data-tab="sqlite">
+                        <span class="nav-icon">🗃️</span>
+                        <span>SQLite</span>
+                    </button>
+                    <button class="nav-item" data-tab="kvstore">
+                        <span class="nav-icon">🔑</span>
+                        <span>键值存储</span>
+                    </button>
+                    <button class="nav-item" data-tab="api">
+                        <span class="nav-icon">📡</span>
+                        <span>API测试</span>
+                    </button>
+                </nav>
+            </aside>
 
-        <div class="tab-content active" id="sqlite-tab">
-            <div class="sql-executor">
-                <h3>SQL 执行器</h3>
-                <textarea id="sqlInput" placeholder="输入SQL语句，如: SELECT * FROM users"></textarea>
-                <div class="params">
-                    <label>参数 (JSON数组):</label>
-                    <input type="text" id="sqlParams" placeholder='["param1", "param2"]'>
-                </div>
-                <div class="btn-group">
-                    <button id="btnExecute">执行</button>
-                    <button id="btnClear">清空</button>
-                    <select id="quickSQL">
-                        <option value="">常用SQL</option>
-                        <option value="SELECT name FROM sqlite_master WHERE type='table'">显示所有表</option>
-                        <option value="PRAGMA table_info(users)">查看表结构</option>
-                        <option value="SELECT * FROM users LIMIT 100">查询前100条</option>
-                    </select>
-                </div>
-            </div>
-            <div class="result" id="sqliteResult"></div>
-        </div>
+            <main class="content">
+                <!-- 控制台面板 -->
+                <section id="console-panel" class="panel active">
+                    <div class="panel-header">
+                        <h2>📋 操作日志</h2>
+                        <div class="panel-actions">
+                            <button id="btnClearLog" class="btn btn-small btn-outline">清空日志</button>
+                        </div>
+                    </div>
+                    <div class="log-container" id="logContainer">
+                        <div class="log-entry info">🚀 服务已就绪，等待操作...</div>
+                    </div>
+                </section>
 
-        <div class="tab-content" id="leveldb-tab">
-            <div class="kv-controls">
-                <h3>键值管理</h3>
-                <div class="search-box">
-                    <input type="text" id="kvSearch" placeholder="搜索键名 (支持前缀)">
-                    <button id="btnSearch">搜索</button>
-                </div>
-                <div class="add-kv">
-                    <input type="text" id="kvKey" placeholder="键名">
-                    <textarea id="kvValue" placeholder="值"></textarea>
-                    <button id="btnAddKV">添加/更新</button>
-                </div>
-            </div>
-            <div class="kv-list" id="kvList"></div>
-        </div>
+                <!-- SQLite面板 -->
+                <section id="sqlite-panel" class="panel">
+                    <div class="panel-header">
+                        <h2>🗃️ SQLite 数据库管理</h2>
+                    </div>
+                    <div class="panel-body">
+                        <div class="sql-editor">
+                            <div class="editor-toolbar">
+                                <select id="quickSQL" class="select">
+                                    <option value="">📁 常用SQL</option>
+                                    <option value="SELECT name FROM sqlite_master WHERE type='table'">显示所有表</option>
+                                    <option value="SELECT * FROM sqlite_master WHERE type='table'">表结构详情</option>
+                                    <option value="PRAGMA database_list">数据库列表</option>
+                                    <option value="SELECT sqlite_version()">SQLite版本</option>
+                                </select>
+                            </div>
+                            <textarea id="sqlInput" class="sql-textarea" placeholder="输入SQL语句...&#10;例如: SELECT * FROM users LIMIT 10"></textarea>
+                            <div class="editor-footer">
+                                <div class="params-row">
+                                    <label>参数:</label>
+                                    <input type="text" id="sqlParams" class="input" placeholder='["param1", "param2"]'>
+                                </div>
+                                <div class="btn-row">
+                                    <button id="btnExecute" class="btn btn-primary">▶ 执行</button>
+                                    <button id="btnClearSql" class="btn btn-outline">清空</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="result-section">
+                            <div class="result-header">
+                                <h3>查询结果</h3>
+                                <span id="resultCount" class="badge"></span>
+                            </div>
+                            <div class="result-content" id="sqliteResult">
+                                <div class="empty-state">执行SQL后结果将显示在这里</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
-        <div class="tab-content" id="status-tab">
-            <h3>服务状态</h3>
-            <div id="statusContent"></div>
+                <!-- 键值存储面板 -->
+                <section id="kvstore-panel" class="panel">
+                    <div class="panel-header">
+                        <h2>🔑 键值存储管理</h2>
+                    </div>
+                    <div class="panel-body">
+                        <div class="kv-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>键 (Key)</label>
+                                    <input type="text" id="kvKey" class="input" placeholder="输入键名...">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>值 (Value)</label>
+                                <textarea id="kvValue" class="textarea" placeholder="输入值..."></textarea>
+                            </div>
+                            <div class="btn-row">
+                                <button id="btnSetKV" class="btn btn-primary">💾 保存</button>
+                                <button id="btnGetKV" class="btn btn-outline">🔍 查询</button>
+                                <button id="btnDelKV" class="btn btn-danger">🗑️ 删除</button>
+                            </div>
+                        </div>
+                        <div class="kv-history">
+                            <h3>最近操作</h3>
+                            <div id="kvHistory" class="kv-list">
+                                <div class="empty-state">暂无操作记录</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- API测试面板 -->
+                <section id="api-panel" class="panel">
+                    <div class="panel-header">
+                        <h2>📡 API 接口测试</h2>
+                    </div>
+                    <div class="panel-body">
+                        <div class="api-list">
+                            <div class="api-item">
+                                <div class="api-method post">POST</div>
+                                <div class="api-info">
+                                    <span class="api-path">/sqlite/execute</span>
+                                    <span class="api-desc">执行SQL语句</span>
+                                </div>
+                                <button class="btn btn-small btn-outline try-api" data-api="sqlite">试一下</button>
+                            </div>
+                            <div class="api-item">
+                                <div class="api-method get">GET</div>
+                                <div class="api-info">
+                                    <span class="api-path">/kv/get?key={key}</span>
+                                    <span class="api-desc">获取键值</span>
+                                </div>
+                                <button class="btn btn-small btn-outline try-api" data-api="kvget">试一下</button>
+                            </div>
+                            <div class="api-item">
+                                <div class="api-method post">POST</div>
+                                <div class="api-info">
+                                    <span class="api-path">/kv/set</span>
+                                    <span class="api-desc">设置键值</span>
+                                </div>
+                                <button class="btn btn-small btn-outline try-api" data-api="kvset">试一下</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
         </div>
     </div>
     <script src="js/app.js"></script>
